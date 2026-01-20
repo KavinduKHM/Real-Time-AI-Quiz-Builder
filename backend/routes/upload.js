@@ -68,3 +68,58 @@ const extractTextFromPpt = async (buffer) => {
   }
 };
 
+// Upload endpoint
+
+router.post('/', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    let extractedText = '';
+    
+    // Extract text based on file type
+    if (req.file.mimetype === 'application/pdf') {
+      extractedText = await extractTextFromPDF(req.file.buffer);
+    } else if (req.file.mimetype.includes('word')) {
+      extractedText = await extractTextFromDoc(req.file.buffer);
+    } else if (req.file.mimetype.includes('presentation')) {
+        extractedText = await extractTextFromPpt(req.file.buffer);
+    } else {
+      return res.status(400).json({ error: 'Unsupported file type for text extraction' });
+    }
+
+    // Upload file to Cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          resource_type: 'raw',
+          folder: 'quiz-files',
+          public_id: `quiz_${Date.now()}`
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    res.json({
+      success: true,
+      fileUrl: uploadResult.secure_url,
+      text: extractedText,
+      fileName: req.file.originalname,
+      fileType: req.file.mimetype
+    });
+
+  } 
+
+  catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = router;
+
