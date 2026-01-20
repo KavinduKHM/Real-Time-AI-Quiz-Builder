@@ -25,12 +25,12 @@ mongoose.connect(process.env.MONGODB_URL)
   .catch(err => console.error('MongoDB Error:', err));
 
 // Routes
-// app.use('/api/auth', require('./routes/auth'));
-// app.use('/api/quiz', require('./routes/quiz'));
-// app.use('/api/upload', require('./routes/upload'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/quiz', require('./routes/quiz'));
+app.use('/api/upload', require('./routes/upload'));
 
 // Socket.io Connection
-// require('./sockets/quizSocket')(io);
+require('./sockets/quizSocket')(io);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
