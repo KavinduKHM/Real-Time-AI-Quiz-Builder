@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const auth = require('../middleware/auth');
 const router = express.Router();
 
 // Register
@@ -81,10 +82,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Get profile
-router.get('/profile', async (req, res) => {
+// Get profile (protected)
+router.get('/profile', auth, async (req, res) => {
   try {
-    // This should be protected by auth middleware
     const user = await User.findById(req.userId).select('-password');
     if (!user) {
       return res.status(404).json({ error: 'User not found' });

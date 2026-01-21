@@ -23,7 +23,7 @@ function App() {
   return (
     <SocketProvider userId={userId} username={username}>
       <Router>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-vh-100 bg-light">
           <Toaster 
             position="top-right"
             toastOptions={{

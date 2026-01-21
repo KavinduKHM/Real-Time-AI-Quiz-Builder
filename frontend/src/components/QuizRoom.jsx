@@ -233,8 +233,10 @@ const QuizRoom = () => {
 
   if (!quiz) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="d-flex align-items-center justify-content-center min-vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
       </div>
     );
   }
@@ -242,22 +244,22 @@ const QuizRoom = () => {
   const currentQuestionData = quiz.questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-vh-100 bg-light py-4">
+      <div className="container">
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="flex justify-between items-center">
+        <div className="card shadow-sm mb-4">
+          <div className="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">{quiz.title}</h1>
-              <p className="text-gray-600 mt-2">{quiz.description}</p>
-              <div className="flex items-center mt-4 space-x-4 text-sm">
-                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+              <h1 className="h4 fw-bold mb-1">{quiz.title}</h1>
+              <p className="text-muted mb-2">{quiz.description}</p>
+              <div className="d-flex flex-wrap gap-2 small">
+                <span className="badge bg-primary-subtle text-primary-emphasis">
                   Room: {roomCode}
                 </span>
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                <span className="badge bg-success-subtle text-success-emphasis">
                   Players: {players.length}
                 </span>
-                <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
+                <span className="badge bg-secondary-subtle text-secondary-emphasis">
                   Questions: {quiz.questions.length}
                 </span>
               </div>

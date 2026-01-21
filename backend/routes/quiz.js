@@ -9,9 +9,27 @@ const auth = require('../middleware/auth');
 router.post('/create', auth, async (req, res) => {
   try {
     const { title, description, fileUrl, fileText, numQuestions = 10 } = req.body;
+    // Fallback: if no text was extracted from the file (e.g. PDF parsing disabled),
+    // use title + description as the source text so quiz generation can still proceed.
+    const baseTextParts = [];
+    if (typeof title === 'string') baseTextParts.push(title);
+    if (typeof description === 'string') baseTextParts.push(description);
+    const fallbackText = baseTextParts.join('. ').trim();
+
+    const sourceText =
+      typeof fileText === 'string' && fileText.trim()
+        ? fileText
+        : fallbackText;
+
+    if (!sourceText) {
+      return res.status(400).json({
+        error:
+          'No usable text was provided to generate quiz questions. Please add a title/description or try a different document.'
+      });
+    }
 
     // Generate quiz questions using AI
-    const questions = await aiService.generateQuizFromText(fileText, numQuestions);
+    const questions = await aiService.generateQuizFromText(sourceText, numQuestions);
 
     // Create quiz
     const quiz = new Quiz({
@@ -19,7 +37,7 @@ router.post('/create', auth, async (req, res) => {
       description,
       creator: req.user.id,
       fileUrl,
-      fileText: fileText.substring(0, 1000), // Store first 1000 chars
+      fileText: sourceText.substring(0, 1000), // Store first 1000 chars
       questions,
       maxPlayers: 10,
       timePerQuestion: 30

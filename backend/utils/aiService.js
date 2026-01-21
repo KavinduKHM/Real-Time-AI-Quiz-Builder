@@ -50,7 +50,7 @@ class AIService {
       }
 
       const questions = JSON.parse(jsonMatch[0]);
-      
+
       // Validate questions
       return questions.map((q, index) => ({
         question: q.question,
@@ -61,6 +61,14 @@ class AIService {
 
     } catch (error) {
       console.error('AI Generation Error:', error);
+
+      // Surface quota/plan issues with a clearer message
+      if (error?.code === 'insufficient_quota' || error?.status === 429) {
+        throw new Error(
+          'AI quota exceeded. Please check your OpenAI plan and billing settings.'
+        );
+      }
+
       throw new Error('Failed to generate quiz questions');
     }
   }

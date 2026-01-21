@@ -65,160 +65,181 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="d-flex align-items-center justify-content-center min-vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-vh-100 bg-light">
       {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-800">AI Quiz Builder</h1>
-              <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
-                Beta
-              </span>
-            </div>
-            
-            {user && (
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={user.avatar}
-                    alt={user.username}
-                    className="w-10 h-10 rounded-full border-2 border-blue-200"
-                  />
-                  <div>
-                    <p className="font-medium text-gray-800">{user.username}</p>
-                    <p className="text-sm text-gray-600">{user.email}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
+      <header className="bg-white shadow-sm">
+        <div className="container py-3 d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center">
+            <h1 className="h4 mb-0 fw-bold text-dark">AI Quiz Builder</h1>
+            <span className="badge bg-primary-subtle text-primary-emphasis ms-3">Beta</span>
           </div>
+
+          {user && (
+            <div className="d-flex align-items-center gap-3">
+              <div className="d-flex align-items-center gap-2">
+                <img
+                  src={user.avatar}
+                  alt={user.username}
+                  className="rounded-circle border border-primary-subtle"
+                  style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                />
+                <div className="small">
+                  <div className="fw-semibold text-dark">{user.username}</div>
+                  <div className="text-muted">{user.email}</div>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="btn btn-outline-secondary btn-sm"
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="container py-5">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Create & Play AI-Powered Quizzes
+        <div className="text-center mb-5">
+          <h1 className="display-6 fw-bold text-dark mb-3">
+            Create &amp; Play AI-Powered Quizzes
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="lead text-muted mx-auto" style={{ maxWidth: '720px' }}>
             Upload any document, generate quizzes instantly, and compete with friends in real-time.
           </p>
         </div>
 
         {/* Action Cards */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
+        <div className="row g-4 mb-5">
           {/* Create Quiz Card */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                <span className="text-3xl">📄</span>
+          <div className="col-md-6">
+            <div className="card h-100 shadow-sm">
+              <div className="card-body text-center">
+                <div className="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary fs-3 mb-3" style={{ width: '64px', height: '64px' }}>
+                  <span>📄</span>
+                </div>
+                <h2 className="h5 fw-bold mb-2">Create New Quiz</h2>
+                <p className="text-muted mb-4">
+                  Upload PDF, DOC, or PPT files and let AI generate questions automatically.
+                </p>
+                <Link
+                  to="/create"
+                  className="btn btn-primary w-100"
+                >
+                  Create Quiz Now
+                </Link>
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Create New Quiz</h2>
-              <p className="text-gray-600">
-                Upload PDF, DOC, or PPT files and let AI generate questions automatically.
-              </p>
             </div>
-            <Link
-              to="/create"
-              className="block w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-center transition-colors"
-            >
-              Create Quiz Now
-            </Link>
           </div>
 
           {/* Join Quiz Card */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                <span className="text-3xl">🎮</span>
+          <div className="col-md-6">
+            <div className="card h-100 shadow-sm">
+              <div className="card-body">
+                <div className="text-center mb-3">
+                  <div className="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success fs-3 mb-3" style={{ width: '64px', height: '64px' }}>
+                    <span>🎮</span>
+                  </div>
+                  <h2 className="h5 fw-bold mb-2">Join Existing Quiz</h2>
+                  <p className="text-muted mb-0">
+                    Enter a room code to join live quiz sessions with friends or colleagues.
+                  </p>
+                </div>
+                <form onSubmit={handleJoinQuiz}>
+                  <div className="mb-3">
+                    <input
+                      type="text"
+                      value={roomCode}
+                      onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                      placeholder="Enter Room Code (e.g., ABC123)"
+                      className="form-control text-uppercase"
+                      maxLength="6"
+                      pattern="[A-Z0-9]{6}"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn btn-success w-100"
+                  >
+                    Join Quiz
+                  </button>
+                </form>
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Join Existing Quiz</h2>
-              <p className="text-gray-600">
-                Enter a room code to join live quiz sessions with friends or colleagues.
-              </p>
             </div>
-            <form onSubmit={handleJoinQuiz} className="space-y-4">
-              <input
-                type="text"
-                value={roomCode}
-                onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                placeholder="Enter Room Code (e.g., ABC123)"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent uppercase"
-                maxLength="6"
-                pattern="[A-Z0-9]{6}"
-              />
-              <button
-                type="submit"
-                className="w-full py-4 px-6 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
-              >
-                Join Quiz
-              </button>
-            </form>
           </div>
         </div>
 
         {/* Features Section */}
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="text-blue-600 text-2xl mb-4">⚡</div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Instant Quiz Generation</h3>
-            <p className="text-gray-600">
-              AI analyzes your documents and creates quizzes in seconds.
-            </p>
+        <div className="row g-4 mb-4">
+          <div className="col-md-4">
+            <div className="card h-100 shadow-sm">
+              <div className="card-body">
+                <div className="fs-3 mb-2 text-primary">⚡</div>
+                <h3 className="h6 fw-bold mb-2">Instant Quiz Generation</h3>
+                <p className="text-muted mb-0">
+                  AI analyzes your documents and creates quizzes in seconds.
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="text-green-600 text-2xl mb-4">👥</div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Real-time Multiplayer</h3>
-            <p className="text-gray-600">
-              Compete with friends in live quiz sessions with leaderboards.
-            </p>
+          <div className="col-md-4">
+            <div className="card h-100 shadow-sm">
+              <div className="card-body">
+                <div className="fs-3 mb-2 text-success">👥</div>
+                <h3 className="h6 fw-bold mb-2">Real-time Multiplayer</h3>
+                <p className="text-muted mb-0">
+                  Compete with friends in live quiz sessions with leaderboards.
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="text-purple-600 text-2xl mb-4">📊</div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Performance Analytics</h3>
-            <p className="text-gray-600">
-              Track your progress and improve with detailed insights.
-            </p>
+          <div className="col-md-4">
+            <div className="card h-100 shadow-sm">
+              <div className="card-body">
+                <div className="fs-3 mb-2 text-primary">📊</div>
+                <h3 className="h6 fw-bold mb-2">Performance Analytics</h3>
+                <p className="text-muted mb-0">
+                  Track your progress and improve with detailed insights.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Quick Stats */}
         {user && (
-          <div className="mt-12 bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Stats</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{user.quizzesCreated?.length || 0}</div>
-                <p className="text-gray-600 mt-1">Quizzes Created</p>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">{user.quizzesJoined?.length || 0}</div>
-                <p className="text-gray-600 mt-1">Quizzes Played</p>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600">{user.totalScore || 0}</div>
-                <p className="text-gray-600 mt-1">Total Score</p>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-600">{user.gamesPlayed || 0}</div>
-                <p className="text-gray-600 mt-1">Games Played</p>
+          <div className="card shadow-sm mt-4">
+            <div className="card-body">
+              <h2 className="h5 fw-bold mb-4">Your Stats</h2>
+              <div className="row text-center g-3">
+                <div className="col-6 col-md-3">
+                  <div className="h4 mb-1 text-primary">{user.quizzesCreated?.length || 0}</div>
+                  <div className="text-muted small">Quizzes Created</div>
+                </div>
+                <div className="col-6 col-md-3">
+                  <div className="h4 mb-1 text-success">{user.quizzesJoined?.length || 0}</div>
+                  <div className="text-muted small">Quizzes Played</div>
+                </div>
+                <div className="col-6 col-md-3">
+                  <div className="h4 mb-1 text-primary">{user.totalScore || 0}</div>
+                  <div className="text-muted small">Total Score</div>
+                </div>
+                <div className="col-6 col-md-3">
+                  <div className="h4 mb-1 text-warning">{user.gamesPlayed || 0}</div>
+                  <div className="text-muted small">Games Played</div>
+                </div>
               </div>
             </div>
           </div>

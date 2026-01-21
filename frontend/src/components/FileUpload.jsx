@@ -42,7 +42,8 @@ const FileUpload = () => {
     try {
       // Step 1: Upload file
       toast.loading('Uploading file...');
-      const uploadResult = await uploadFile(file);
+      const uploadResponse = await uploadFile(file);
+      const { fileUrl, text } = uploadResponse.data || {};
       setUploadProgress(50);
       
       // Step 2: Create quiz
@@ -50,20 +51,27 @@ const FileUpload = () => {
       const quizData = {
         title,
         description,
-        fileUrl: uploadResult.fileUrl,
-        fileText: uploadResult.text,
+        fileUrl,
+        fileText: text,
         numQuestions
       };
 
-      const quizResult = await createQuiz(quizData);
+      const quizResponse = await createQuiz(quizData);
+      const quiz = quizResponse.data?.quiz;
       setUploadProgress(100);
 
       toast.success('Quiz created successfully!');
       
       // Navigate to quiz room
-      navigate(`/quiz/${quizResult.quiz.roomCode}`, {
-        state: { quiz: quizResult.quiz }
-      });
+      if (quiz) {
+        navigate(`/quiz/${quiz.roomCode}`, {
+          state: { quiz }
+        });
+      } else {
+        toast.error('Quiz data was not returned from the server');
+      }
+      
+      
 
     } catch (error) {
       console.error('Error creating quiz:', error);
@@ -75,51 +83,50 @@ const FileUpload = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
+    <div className="container my-4">
+      <div className="card shadow-sm p-4 mx-auto" style={{ maxWidth: '800px' }}>
+        <h1 className="h3 fw-bold text-dark mb-4">
           Create AI-Powered Quiz
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit}>
           {/* Title Input */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mb-3">
+            <label className="form-label">
               Quiz Title *
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="form-control"
               placeholder="Enter quiz title"
               required
             />
           </div>
 
           {/* Description Input */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mb-3">
+            <label className="form-label">
               Description (Optional)
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="form-control"
               placeholder="Describe your quiz"
               rows="3"
             />
           </div>
 
           {/* File Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mb-3">
+            <label className="form-label">
               Upload Document *
             </label>
-            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
-              <div className="space-y-1 text-center">
+            <div className="border border-secondary border-dashed rounded p-4 text-center bg-light-subtle">
                 <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
+                  className="mb-3"
                   stroke="currentColor"
                   fill="none"
                   viewBox="0 0 48 48"
@@ -132,34 +139,34 @@ const FileUpload = () => {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <div className="flex text-sm text-gray-600">
-                  <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500">
-                    <span>Upload a file</span>
+                <div className="d-flex justify-content-center small text-muted mb-1">
+                  <label className="btn btn-outline-primary btn-sm me-2 mb-0">
+                    <span>Choose file</span>
                     <input
                       type="file"
-                      className="sr-only"
+                      className="d-none"
+                      name="file"
                       onChange={handleFileChange}
                       accept=".pdf,.doc,.docx"
-                      required
                     />
                   </label>
-                  <p className="pl-1">or drag and drop</p>
+                  <span className="align-self-center">or drag and drop</span>
                 </div>
-                <p className="text-xs text-gray-500">
-                  PDF, DOC, DOCX, PPT up to 30MB
+                <p className="small text-muted mb-1">
+                  PDF, DOC, DOCX up to 10MB
                 </p>
                 {file && (
-                  <p className="text-sm text-green-600">
-                    ✓ Selected: {file.name}
+                  <p className="small text-success mb-0">
+                    ✓ Selected: <strong>{file.name}</strong>
                   </p>
                 )}
               </div>
             </div>
-          </div>
+          
 
           {/* Number of Questions */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mb-3">
+            <label className="form-label">
               Number of Questions: {numQuestions}
             </label>
             <input
@@ -168,9 +175,9 @@ const FileUpload = () => {
               max="20"
               value={numQuestions}
               onChange={(e) => setNumQuestions(parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              className="form-range"
             />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <div className="d-flex justify-content-between small text-muted mt-1">
               <span>5</span>
               <span>20</span>
             </div>
@@ -178,14 +185,18 @@ const FileUpload = () => {
 
           {/* Progress Bar */}
           {loading && (
-            <div className="space-y-2">
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="mb-3">
+              <div className="progress">
                 <div
-                  className="h-full bg-blue-600 transition-all duration-300"
+                  className="progress-bar progress-bar-striped progress-bar-animated"
+                  role="progressbar"
                   style={{ width: `${uploadProgress}%` }}
+                  aria-valuenow={uploadProgress}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
                 />
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="small text-muted mt-2 mb-0">
                 {uploadProgress < 50 ? 'Uploading file...' : 'Generating quiz with AI...'}
               </p>
             </div>
@@ -195,17 +206,14 @@ const FileUpload = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 px-4 rounded-lg font-medium ${
-              loading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
+            className="btn btn-primary w-100"
           >
             {loading ? 'Creating Quiz...' : 'Create Quiz'}
           </button>
         </form>
       </div>
     </div>
+    
   );
 };
 

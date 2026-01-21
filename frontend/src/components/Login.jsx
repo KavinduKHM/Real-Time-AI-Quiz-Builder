@@ -31,37 +31,33 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
-          <p className="text-gray-600 mt-2">Sign in to your AI Quiz account</p>
+    <div className="container d-flex align-items-center justify-content-center min-vh-100 bg-light">
+      <div className="card shadow-lg p-4 w-100" style={{ maxWidth: '420px' }}>
+        <div className="text-center mb-4">
+          <h1 className="h3 fw-bold text-dark">Welcome Back</h1>
+          <p className="text-muted mt-2">Sign in to your AI Quiz account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
+        <form onSubmit={handleSubmit} className="mb-3">
+          <div className="mb-3">
+            <label className="form-label">Email address</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="form-control"
               placeholder="you@example.com"
               required
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
+          <div className="mb-3">
+            <label className="form-label">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="form-control"
               placeholder="••••••••"
               required
             />
@@ -70,35 +66,27 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 px-4 rounded-lg font-medium ${
-              loading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
+            className="btn btn-primary w-100"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
 
-          <div className="text-center">
-            <p className="text-gray-600">
+          <div className="text-center mt-3">
+            <p className="text-muted mb-0">
               Don't have an account?{' '}
-              <Link to="/register" className="text-blue-600 hover:text-blue-800 font-medium">
+              <Link to="/register" className="fw-semibold text-primary text-decoration-none">
                 Sign up
               </Link>
             </p>
           </div>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Demo credentials:
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Email: demo@quiz.com<br />
-              Password: demo123
-            </p>
-          </div>
+        <div className="border-top pt-3 mt-2 text-center small text-muted">
+          <p className="mb-1">Demo credentials:</p>
+          <p className="mb-0">
+            Email: demo@quiz.com<br />
+            Password: demo123
+          </p>
         </div>
       </div>
     </div>
