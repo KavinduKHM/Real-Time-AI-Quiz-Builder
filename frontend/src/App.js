@@ -24,7 +24,23 @@ function App() {
     <SocketProvider userId={userId} username={username}>
       <Router>
         <div className="min-h-screen bg-gray-50">
-          <Toaster position="top-right" />
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              },
+              success: {
+                duration: 3000,
+                theme: {
+                  primary: 'green',
+                  secondary: 'black',
+                },
+              },
+            }}
+          />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
