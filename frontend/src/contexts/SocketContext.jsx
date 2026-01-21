@@ -8,9 +8,9 @@ export const SocketProvider = ({ children, userId, username }) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const socketInstance = io(process.env.REACT_APP_SERVER_URL || 'http://localhost:5000', {
+    const socketInstance = io(import.meta.env.VITE_SERVER_URL || 'http://localhost:5000', {
       transports: ['websocket', 'polling'],
-      withCredentials: true
+      withCredentials: true,
     });
 
     socketInstance.on('connect', () => {
@@ -28,20 +28,19 @@ export const SocketProvider = ({ children, userId, username }) => {
     return () => {
       socketInstance.disconnect();
     };
-  }, []);
+  }, [userId, username]);
 
-    // Join quiz room when socket is ready
   const joinQuizRoom = (roomCode) => {
     if (socket && userId && username) {
       socket.emit('join-quiz', {
         roomCode,
         userId,
-        username
+        username,
       });
     }
   };
 
-   const leaveQuizRoom = (roomCode) => {
+  const leaveQuizRoom = (roomCode) => {
     if (socket) {
       socket.emit('leave-quiz', { roomCode });
     }
@@ -51,7 +50,7 @@ export const SocketProvider = ({ children, userId, username }) => {
     socket,
     isConnected,
     joinQuizRoom,
-    leaveQuizRoom
+    leaveQuizRoom,
   };
 
   return (
@@ -60,3 +59,5 @@ export const SocketProvider = ({ children, userId, username }) => {
     </SocketContext.Provider>
   );
 };
+
+export const useSocket = () => useContext(SocketContext);

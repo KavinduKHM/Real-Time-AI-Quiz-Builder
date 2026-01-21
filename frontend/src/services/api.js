@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Use Vite env variable if provided, otherwise default to localhost API
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -47,6 +48,12 @@ export const quizAPI = {
   startQuiz: (quizId) => api.post(`/quiz/${quizId}/start`),
   getLeaderboard: (quizId) => api.get(`/quiz/${quizId}/leaderboard`)
 };
+
+// Re-export commonly used actions as named functions
+export const uploadFile = uploadAPI.uploadFile;
+export const createQuiz = quizAPI.createQuiz;
+export const getQuizDetails = quizAPI.getQuizDetails;
+export const submitAnswer = quizAPI.submitAnswer;
 
 // Helper function for error handling
 export const handleApiError = (error) => {

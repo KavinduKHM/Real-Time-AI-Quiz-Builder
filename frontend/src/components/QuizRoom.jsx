@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSocket } from '../contexts/SocketContext';
+import { useSocket } from '../contexts/SocketContext.jsx';
 import { getQuizDetails, submitAnswer } from '../services/api';
 import { toast } from 'react-hot-toast';
 
