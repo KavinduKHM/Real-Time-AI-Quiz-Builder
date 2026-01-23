@@ -15,7 +15,7 @@ const quizSchema = new mongoose.Schema({
   },
   fileUrl: {
     type: String,
-    required: true
+    required: false
   },
   fileText: {
     type: String,
@@ -96,12 +96,14 @@ const quizSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Generate room code before saving
+// Generate room code before saving (guard next for promise-based hooks)
 quizSchema.pre('save', function(next) {
   if (!this.roomCode) {
     this.roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
   }
-  next();
+  if (typeof next === 'function') {
+    next();
+  }
 });
 
 module.exports = mongoose.model('Quiz', quizSchema);

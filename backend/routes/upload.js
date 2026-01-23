@@ -93,25 +93,45 @@ router.post('/', upload.single('file'), async (req, res) => {
       return res.status(400).json({ error: 'Unsupported file type for text extraction' });
     }
 
-    // Upload file to Cloudinary
-    const uploadResult = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        {
-          resource_type: 'raw',
-          folder: 'quiz-files',
-          public_id: `quiz_${Date.now()}`
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-      stream.end(req.file.buffer);
-    });
+    // Upload file to Cloudinary.
+    // If the upload fails (for example due to network issues or
+    // credentials/plan limits), log the error but do NOT fail
+    // the entire request – the app can still generate a quiz
+    // from the extracted text alone.
+
+    let fileUrl = null;
+
+    try {
+      const uploadResult = await new Promise((resolve) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'raw',
+            folder: 'quiz-files',
+            public_id: `quiz_${Date.now()}`
+          },
+          (error, result) => {
+            if (error) {
+              console.error('Cloudinary upload failed:', error);
+              // Resolve with null so the request can continue
+              resolve(null);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+
+      if (uploadResult && uploadResult.secure_url) {
+        fileUrl = uploadResult.secure_url;
+      }
+    } catch (cloudinaryError) {
+      console.error('Unexpected Cloudinary error:', cloudinaryError);
+    }
 
     res.json({
       success: true,
-      fileUrl: uploadResult.secure_url,
+      fileUrl,
       text: extractedText,
       fileName: req.file.originalname,
       fileType: req.file.mimetype

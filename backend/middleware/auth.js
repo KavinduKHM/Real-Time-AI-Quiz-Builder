@@ -9,6 +9,14 @@ const auth = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // For existing route handlers that expect req.user.id / req.user.username
+    req.user = {
+      id: decoded.id,
+      username: decoded.username
+    };
+
+    // Also expose flat properties for newer code paths
     req.userId = decoded.id;
     req.username = decoded.username;
     next();
