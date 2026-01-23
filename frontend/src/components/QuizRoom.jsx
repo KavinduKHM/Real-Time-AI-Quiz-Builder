@@ -27,16 +27,22 @@ const QuizRoom = () => {
     const fetchQuiz = async () => {
       try {
         const response = await getQuizDetails(roomCode);
-        setQuiz(response.quiz);
-        setPlayers(response.quiz.players || []);
-        setLeaderboard(response.quiz.leaderboard || []);
-        setIsStarted(response.quiz.isStarted);
-        setIsFinished(response.quiz.isFinished);
+        const quizData = response.data?.quiz || response.quiz; // support raw axios or pre-unwrapped
+        if (!quizData) {
+          throw new Error('Quiz data missing');
+        }
+
+        setQuiz(quizData);
+        setPlayers(quizData.players || []);
+        setLeaderboard(quizData.leaderboard || []);
+        setIsStarted(quizData.isStarted);
+        setIsFinished(quizData.isFinished);
         
-        if (response.quiz.isStarted && !response.quiz.isFinished) {
+        if (quizData.isStarted && !quizData.isFinished) {
           startQuestionTimer();
         }
       } catch (error) {
+        console.error('Load quiz failed:', error);
         toast.error('Failed to load quiz');
         navigate('/');
       }
