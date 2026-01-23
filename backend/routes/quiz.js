@@ -293,7 +293,11 @@ router.post('/:quizId/answer', auth, async (req, res) => {
       return res.status(404).json({ error: 'Quiz not found' });
     }
 
-    if (!quiz.isStarted || quiz.isFinished) {
+    // If the quiz hasn't been started yet, automatically start it on first answer
+    if (!quiz.isStarted && !quiz.isFinished) {
+      quiz.isStarted = true;
+    }
+    if (quiz.isFinished) {
       return res.status(400).json({ error: 'Quiz is not active' });
     }
 
@@ -313,11 +317,15 @@ router.post('/:quizId/answer', auth, async (req, res) => {
 
     // Check answer
     const question = quiz.questions[questionIndex];
+    if (!question) {
+      return res.status(400).json({ error: 'Invalid question index' });
+    }
     const isCorrect = question.correctAnswer === selectedOption;
     
     // Calculate score
     let points = isCorrect ? question.points : 0;
-    const timeBonus = Math.max(0, Math.floor((quiz.timePerQuestion - timeTaken) / 5));
+    const safeTimeTaken = Number.isFinite(timeTaken) ? timeTaken : quiz.timePerQuestion;
+    const timeBonus = Math.max(0, Math.floor((quiz.timePerQuestion - safeTimeTaken) / 5));
     points += timeBonus;
 
     // Update player

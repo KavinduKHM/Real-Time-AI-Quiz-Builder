@@ -169,7 +169,10 @@ const QuizRoom = () => {
     const timeTaken = Math.floor((Date.now() - startTimeRef.current) / 1000);
     
     try {
-      const response = await submitAnswer(quiz._id, {
+      const quizId = quiz?._id || quiz?.id;
+      if (!quizId) throw new Error('Quiz id missing');
+
+      const response = await submitAnswer(quizId, {
         questionIndex: currentQuestion,
         selectedOption,
         timeTaken
