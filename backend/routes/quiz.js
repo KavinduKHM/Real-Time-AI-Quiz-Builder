@@ -85,7 +85,17 @@ router.post('/create', auth, async (req, res) => {
       questions,
       roomCode: generateRoomCode(),
       maxPlayers: Number(process.env.MAX_PLAYERS) || 10,
-      timePerQuestion: Number(process.env.TIME_PER_QUESTION) || 30
+      timePerQuestion: Number(process.env.TIME_PER_QUESTION) || 30,
+      players: [
+        {
+          user: creatorId,
+          username: req.username,
+          avatar: null,
+          score: 0,
+          currentQuestion: 0,
+          answers: []
+        }
+      ]
     });
 
     await quiz.save();
@@ -206,6 +216,9 @@ router.post('/join', auth, async (req, res) => {
 
     // Add player
     const user = await User.findById(req.userId).select('username avatar');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     
     quiz.players.push({
       user: req.userId,
